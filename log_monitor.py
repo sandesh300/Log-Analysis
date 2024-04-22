@@ -94,3 +94,25 @@ def generate_status_code_report():
     logger.info("Summary of HTTP status codes:")
     for status_code, count in sorted(status_code_counts.items(), key=lambda x: x[1], reverse=True):
         logger.info(f"{status_code}: {count}")
+
+# Main loop to log messages
+while True:
+    try:
+        # Randomly select a log level
+        log_level = random.choice(log_levels)
+
+        # Get the log message format for the selected log level
+        log_message = formats[log_level]
+
+        # Log the message
+        logger.log(log_level, log_message)
+
+        # Sleep for a short interval
+        time.sleep(1)
+    except KeyboardInterrupt:
+        # Handle keyboard interrupt (Ctrl+C)
+        print("\nLogging interrupted. Exiting.")
+        generate_status_code_report()
+        break
+
+monitor_log_file(log_file_path)
