@@ -23,3 +23,15 @@ else:
 log_file_path = args.log_file or config.get("DEFAULT", "log_file", fallback="app.log")
 log_level = config.get("DEFAULT", "log_level", fallback="DEBUG")
 log_format = config.get("DEFAULT", "log_format", fallback="%(asctime)s [%(levelname)s] %(message)s")
+
+# Configure logging
+logging.basicConfig(
+    level=log_level,
+    format=log_format,
+    handlers=[
+        logging.FileHandler(log_file_path),
+        logging.StreamHandler()
+    ]
+)
+
+logger = logging.getLogger(__name__)
