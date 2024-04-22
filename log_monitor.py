@@ -76,3 +76,21 @@ def monitor_log_file(file_path):
         print("\nLog monitoring interrupted. Exiting.")
     except Exception as e:
         logger.error(f"Error monitoring log file: {e}")
+
+def analyze_log_entry(log_entry):
+    # Count occurrences of specific keywords or patterns
+    keyword = "error"
+    if keyword.lower() in log_entry.lower():
+        logger.error(f"Found '{keyword}' in log entry: {log_entry.strip()}")
+
+    # Count HTTP status codes
+    http_status_pattern = r"HTTP/\d\.\d\"\s(\d{3})"
+    match = re.search(http_status_pattern, log_entry)
+    if match:
+        status_code = match.group(1)
+        status_code_counts[status_code] = status_code_counts.get(status_code, 0) + 1
+
+def generate_status_code_report():
+    logger.info("Summary of HTTP status codes:")
+    for status_code, count in sorted(status_code_counts.items(), key=lambda x: x[1], reverse=True):
+        logger.info(f"{status_code}: {count}")
