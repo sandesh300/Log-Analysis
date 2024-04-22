@@ -35,3 +35,44 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
+
+# Define log message formats
+formats = {
+    logging.INFO: "INFO message",
+    logging.DEBUG: "DEBUG message",
+    logging.ERROR: "ERROR message"
+}
+
+# Define log levels to cycle through
+log_levels = [logging.INFO, logging.DEBUG, logging.ERROR]
+
+# Dictionary to store HTTP status code counts
+status_code_counts = {}
+
+def monitor_log_file(file_path):
+    try:
+        log_file = Path(file_path)
+        if not log_file.exists():
+            logger.error(f"Log file '{file_path}' does not exist.")
+            return
+        if not log_file.is_file():
+            logger.error(f"'{file_path}' is not a file.")
+            return
+        with log_file.open("r") as f:
+            # Monitor the log file for new entries
+            f.seek(0, 2)  # Move to the end of the file
+            while True:
+                line = f.readline()
+                if not line:
+                    time.sleep(0.1)  # Avoid high CPU usage
+                    continue
+                # Perform log analysis
+                analyze_log_entry(line)
+    except PermissionError as e:
+        logger.error(f"Permission denied: {e}")
+    except (FileNotFoundError, IOError) as e:
+        logger.error(f"Error opening log file: {e}")
+    except KeyboardInterrupt:
+        print("\nLog monitoring interrupted. Exiting.")
+    except Exception as e:
+        logger.error(f"Error monitoring log file: {e}")
